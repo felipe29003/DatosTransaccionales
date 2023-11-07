@@ -4,12 +4,23 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
+/**
+ * La clase Cliente se encarga de crear el Socket para comunicarse con el servidor.
+ * @author Subgrupo 27 (Persistencia y Datos Transaccionales)
+*/
 public class Cliente {
+
+    /**
+     * Es el método principal de la clase.
+     * */
     public static void main(String[] args) {
+
+        // Crea el Socket del cliente
         Socket clienteSocket = null;
         PrintWriter salida = null;
         BufferedReader entrada = null;
 
+        // Conecta el Socket Cliente al servidor a través del puerto asignado
         try {
             clienteSocket = new Socket("127.0.0.1", 5000);
             salida = new PrintWriter(clienteSocket.getOutputStream(), true);
@@ -17,6 +28,7 @@ public class Cliente {
             System.out.println("Bienvenido al chat multidireccional y bidireccional ,para comunicarte con una persona en un chat privado utiliza el simbolo @ seguido del nombre de la persona");
             Scanner scanner = new Scanner(System.in);
 
+            // Ingresa el nombre del Cliente
             System.out.print("Ingresa tu nombre: ");
             String nombre = scanner.nextLine();
             salida.println(nombre);
@@ -53,6 +65,8 @@ public class Cliente {
             while (true) {
                 mensaje = scanner.nextLine();
                 salida.println(mensaje);
+
+                // Condición para que cuando el Cliente escriba la palabra "chao" se desconecte y se muestre en pantalla
                 if (mensaje.equalsIgnoreCase("chao")) {
                     System.out.println("El usuario "+nombre+" se desconecto");
                     clienteSocket.close();
