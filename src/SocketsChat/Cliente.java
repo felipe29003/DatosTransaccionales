@@ -14,9 +14,9 @@ public class Cliente {
 
     public static void main(String[] args) {
         /*
-        *clienteSocket es una variable de tipo socket la cual permite almacenar los datos del socket del cliente
-        * la variable salida asociada a un objeto PrintWriter permite enviar datos del usuario del socket cliente hacia el servidor usando flujo de salida
-        * la variable entrada asociada a un objeto BufferedReader lee los datos del servidor y se los envia al cliente a travez de un flujo de entrada
+         *clienteSocket es una variable de tipo socket la cual permite almacenar los datos del socket del cliente
+         * la variable salida asociada a un objeto PrintWriter permite enviar datos del usuario del socket cliente hacia el servidor usando flujo de salida
+         * la variable entrada asociada a un objeto BufferedReader lee los datos del servidor y se los envia al cliente a travez de un flujo de entrada
          */
         Socket clienteSocket = null;
         PrintWriter salida = null;

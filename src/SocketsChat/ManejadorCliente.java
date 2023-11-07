@@ -19,10 +19,10 @@ public class ManejadorCliente implements Runnable {
     private String nombreCliente;
 
 
-/*
-*metodo constructor de la clase manejador cliente
+    /*
+     *metodo constructor de la clase manejador cliente
 
- */
+     */
     public ManejadorCliente(Socket clienteSocket, PrintWriter salida) {
 
         this.clienteSocket = clienteSocket;

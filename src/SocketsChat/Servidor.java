@@ -37,8 +37,8 @@ public class Servidor {
                 PrintWriter salida = new PrintWriter(clienteSocket.getOutputStream(), true);
 
                 /*
-                    *cada vez que un cliente se conecta se obtiene su direcion IP y se muestra en el log del servidor
-                */
+                 *cada vez que un cliente se conecta se obtiene su direcion IP y se muestra en el log del servidor
+                 */
 
                 Thread hiloCliente = new Thread(new ManejadorCliente(clienteSocket, salida));
                 hiloCliente.start();
@@ -53,10 +53,10 @@ public class Servidor {
             e.printStackTrace();
         }
     }
-/*
-Esta clase permite imprimir en el log del cliente y del servidor que clientes se encuentran conectados se actualiza cada vez que uno se conecta
+    /*
+    Esta clase permite imprimir en el log del cliente y del servidor que clientes se encuentran conectados se actualiza cada vez que uno se conecta
 
- */
+     */
     public static void enviarListaUsuarios() {
         synchronized (clientesConectados) {
             for (PrintWriter escritor : clientesConectados.values()) {
