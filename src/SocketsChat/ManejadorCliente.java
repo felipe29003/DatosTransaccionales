@@ -2,45 +2,54 @@ package SocketsChat;
 
 import java.io.*;
 import java.net.*;
-import java.util.List;
-/*
-Esta clase permite crear los hilos que gestionan los chats del cliente
- */
 
 public class ManejadorCliente implements Runnable {
     private Socket clienteSocket;
-    // creamos una variable privada de tipo socket
     private PrintWriter salida;
-    private BufferedReader entrada;
-    private List<PrintWriter> salidas;
+    private String nombreCliente;
 
-    public ManejadorCliente(Socket clienteSocket, PrintWriter salida, List<PrintWriter> salidas) {
+    public ManejadorCliente(Socket clienteSocket, PrintWriter salida) {
         this.clienteSocket = clienteSocket;
         this.salida = salida;
-        this.salidas = salidas;
     }
 
     @Override
     public void run() {
         try {
-            entrada = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
-            String nombreCliente = entrada.readLine();
+            BufferedReader entrada = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
+            nombreCliente = entrada.readLine();
             System.out.println("Cliente conectado: " + nombreCliente);
 
+            synchronized (Servidor.clientesConectados) {
+                Servidor.clientesConectados.put(nombreCliente, salida);
+                Servidor.enviarListaUsuarios();
+            }
+
+            String mensaje;
             while (true) {
-                String mensaje = entrada.readLine();
+                mensaje = entrada.readLine();
                 if (mensaje == null) {
-                    // Cliente desconectado
                     break;
                 }
 
-                System.out.println(nombreCliente + ": " + mensaje);
+                if (mensaje.startsWith("@")) {
+                    int espacio = mensaje.indexOf(" ");
+                    if (espacio != -1) {
+                        String destinatario = mensaje.substring(1, espacio);
+                        String contenido = mensaje.substring(espacio + 1);
 
-
-                synchronized (salidas) {
-                    for (PrintWriter otraSalida : salidas) {
-                        if (otraSalida != salida) {
-                            otraSalida.println(nombreCliente + ": " + mensaje);
+                        PrintWriter escritor = Servidor.clientesConectados.get(destinatario);
+                        if (escritor != null) {
+                            escritor.println(nombreCliente + ": " + contenido);
+                        }
+                    }
+                } else {
+                    // Mensaje para todos
+                    synchronized (Servidor.clientesConectados) {
+                        for (PrintWriter escritor : Servidor.clientesConectados.values()) {
+                            if (escritor != salida) {
+                                escritor.println(nombreCliente + ": " + mensaje);
+                            }
                         }
                     }
                 }
@@ -50,8 +59,9 @@ public class ManejadorCliente implements Runnable {
         } finally {
             try {
                 clienteSocket.close();
-                synchronized (salidas) {
-                    salidas.remove(salida);
+                synchronized (Servidor.clientesConectados) {
+                    Servidor.clientesConectados.remove(nombreCliente);
+                    Servidor.enviarListaUsuarios();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
